@@ -1,5 +1,39 @@
 ﻿@page "/"
+@using Mudify.Services
+@using YoutubeExplode.Search;
+@inject Youtube youtube
 
 <PageTitle>Index</PageTitle>
 
-<MudTextField Value="string.Empty" Label="Search" Variant="Variant.Outlined"></MudTextField>
+<div class="search-container">
+    <MudTextField @bind-Value="@search" Label="Search" Variant="Variant.Outlined" Immediate="true"></MudTextField>
+    <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Disabled="@string.IsNullOrEmpty(search)" DisableElevation="true" Class="btn" OnClick="@(() => SearchVideosAsync())">Search</MudButton>
+</div>
+
+<MudSimpleTable Hover="true">
+    <tbody>
+        @foreach (VideoSearchResult video in videos)
+        {
+            <tr>
+                <td>@video.Author</td>
+                <td>@video.Title</td>
+                <td>@video.Duration</td>
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code{
+    private IList<VideoSearchResult> videos = new List<VideoSearchResult>();
+    private string search;
+
+    private async Task SearchVideosAsync()
+    {
+        videos.Clear();
+        await foreach(VideoSearchResult video in youtube.SearchVideosAsync(search))
+        {
+            videos.Add(video);
+            StateHasChanged();
+        }
+    }
+}
