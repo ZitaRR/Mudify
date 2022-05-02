@@ -113,6 +113,10 @@ tr:hover{
     cursor: pointer;
 }
 
+.table{
+    margin: 2rem 0;
+}
+
 @media screen and (min-width: 920px){
     html, body{
         font-size: 1.1rem;

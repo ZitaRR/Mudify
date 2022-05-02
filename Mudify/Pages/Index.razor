@@ -10,7 +10,7 @@
     <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Disabled="@string.IsNullOrEmpty(search)" DisableElevation="true" Class="btn" OnClick="@(() => SearchVideosAsync())">Search</MudButton>
 </div>
 
-<MudSimpleTable Hover="true">
+<MudSimpleTable Hover="true" Elevation="5" Class="table">
     <tbody>
         @foreach (VideoSearchResult video in videos)
         {
