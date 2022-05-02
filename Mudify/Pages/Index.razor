@@ -2,6 +2,7 @@
 @using Mudify.Services
 @using YoutubeExplode.Search;
 @inject Youtube youtube
+@inject ISnackbar snackbar;
 
 <PageTitle>Index</PageTitle>
 
@@ -14,7 +15,7 @@
     <tbody>
         @foreach (VideoSearchResult video in videos)
         {
-            <tr>
+            <tr @onclick="@(() => PlayAsync(video))">
                 <td>@video.Author</td>
                 <td>@video.Title</td>
                 <td>@video.Duration</td>
@@ -26,7 +27,7 @@
 <div class="flex-container">
     <MudCard Class="player" Elevation="5">
         <MudCardContent>
-            <MudText Typo="Typo.h6" Class="track">Playing: Beat it</MudText>
+            <MudText Typo="Typo.h6" Class="track">@(current?.Title ?? "Nothing")</MudText>
         </MudCardContent>
         <MudCardActions Class="input">
             <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Small" DisableElevation="true"></MudFab>
@@ -39,9 +40,16 @@
     </MudCard>
 </div>
 
+<audio src="@source" autoplay>
+
+</audio>
+
 @code{
     private IList<VideoSearchResult> videos = new List<VideoSearchResult>();
+    private VideoSearchResult current;
     private string search;
+    private string source;
+    private bool isPlaying = false;
 
     private async Task SearchVideosAsync()
     {
@@ -51,5 +59,12 @@
             videos.Add(video);
             StateHasChanged();
         }
+    }
+
+    private async Task PlayAsync(VideoSearchResult video)
+    {
+        current = video;
+        snackbar.Add($"Now playing: {video.Title}");
+        source = await youtube.GetAudioBase64String(video);
     }
 }
