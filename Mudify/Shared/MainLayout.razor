@@ -1,0 +1,30 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Mudify</PageTitle>
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())"/>
+        <MudText Typo="Typo.h4">Mudify</MudText>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    bool drawerOpen = true;
+
+    private void ToggleDrawer()
+    {
+        drawerOpen = !drawerOpen;
+    }
+}
