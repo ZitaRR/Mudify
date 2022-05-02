@@ -64,6 +64,11 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
+.flex-container{
+    display: flex;
+    justify-content: center;
+}
+
 .search-container{
     position: relative;
 }
@@ -75,8 +80,45 @@ a, .btn-link {
     height: 100%;
 }
 
+.player{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    width: 90vw;
+    bottom: 2rem;
+}
+
+.player *{
+    margin: 0;
+    padding: 0;
+}
+
+.player .track{
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.player .input{
+    display: flex;
+    justify-content: center;
+}
+
+.player .input *{
+    margin: 0 .5rem;
+}
+
+tr:hover{
+    cursor: pointer;
+}
+
 @media screen and (min-width: 920px){
     html, body{
         font-size: 1.1rem;
+    }
+
+    .player{
+        width: 35vw;
     }
 }
