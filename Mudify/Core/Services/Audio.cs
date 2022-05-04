@@ -8,12 +8,15 @@ namespace Mudify.Core.Services;
 
 public class Audio
 {
-    public static Func<Track, Task> OnStart;
-    public static Func<Track, Task> OnFinished;
-    public static Func<Track, Task> OnProgress;
+    private static Func<Task> onStart;
+    private static Func<Task> onFinished;
+    private static Func<long, Task> onProgress;
 
-    public static Track Current { get; private set; }
-    public static DateTime CurrentStart { get; private set; }
+    public Func<Track, Task> OnStart { get; set; }
+    public Func<Track, Task> OnFinished { get; set; }
+    public Func<Track, Task> OnProgress { get; set; }
+    public Track Current { get; private set; }
+    public bool IsPaused { get; private set; } = true;
 
     private readonly IJSRuntime js;
     private readonly YoutubeClient client;
@@ -22,6 +25,36 @@ public class Audio
     {
         this.js = js;
         client = new();
+
+        onStart += StartTrack;
+        onFinished += FinishedTrack;
+        onProgress += ProgressTrack;
+    }
+
+    private async Task StartTrack()
+    {
+        await OnStart?.Invoke(Current);
+    }
+
+    private async Task FinishedTrack()
+    {
+        Track clone = new()
+        {
+            Title = Current.Title,
+            Author = Current.Author,
+            Duration = Current.Duration,
+            Position = Current.Duration,
+            Audio = Current.Audio
+        };
+        Current = null;
+
+        await OnFinished?.Invoke(Current);
+    }
+
+    private async Task ProgressTrack(long position)
+    {
+        Current.SetPosition(position);
+        await OnProgress?.Invoke(Current);
     }
 
     public async Task PlayAsync(VideoSearchResult video)
@@ -30,8 +63,6 @@ public class Audio
         {
             throw new ArgumentNullException(nameof(video));
         }
-
-        CurrentStart = DateTime.Now;
 
         StreamManifest manifest = await client.Videos.Streams.GetManifestAsync(video.Id);
         IStreamInfo info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
@@ -48,34 +79,47 @@ public class Audio
             Audio = memory.ToArray()
         };
 
-        await js.InvokeVoidAsync("buffer", Current);
+        IsPaused = false;
+        await js.InvokeVoidAsync("play", Current);
+    }
+
+    public async Task PauseAsync()
+    {
+        if (Current is null)
+        {
+            return;
+        }
+
+        IsPaused = true;
+        await js.InvokeVoidAsync("pause");
+    }
+
+    public async Task ResumeAsync()
+    {
+        if (Current is null)
+        {
+            return;
+        }
+
+        IsPaused = false;
+        await js.InvokeVoidAsync("unpause");
     }
 
     [JSInvokable]
     public static async Task OnTrackStart()
     {
-        CurrentStart = DateTime.Now;
-        await OnStart?.Invoke(Current)!;
+        await onStart?.Invoke();
     }
 
     [JSInvokable]
     public static async Task OnTrackEnd()
     {
-        Track clone = new()
-        {
-            Title = Current.Title,
-            Author = Current.Author,
-            Duration = Current.Duration,
-            Audio = Current.Audio
-        };
-        Current = null!;
-
-        await OnFinished?.Invoke(clone)!;
+        await onFinished?.Invoke();
     }
 
     [JSInvokable]
-    public static async Task OnTrackProgress()
+    public static async Task OnTrackProgress(long position)
     {
-        await OnProgress?.Invoke(Current);
+        await onProgress?.Invoke(position);
     }
 }

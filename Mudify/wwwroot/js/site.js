@@ -1,28 +1,57 @@
 ﻿AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
-const source = context.createBufferSource();
+let source;
+let start = 0;
+let hasEnded = true;
 
 setInterval(() => {
-    if (source.buffer.length <= 0) {
+    if (!source?.buffer || hasEnded ||
+        context.state === "suspended" ||
+        context.state === "closed") {
         return;
     }
-    DotNet.invokeMethodAsync("Mudify", "OnTrackProgress");
+    else if (source.buffer.length <= 0) {
+        return;
+    }
+
+    progress = Math.round(((context.currentTime - start) / source.playbackRate.value) * 1000);
+    DotNet.invokeMethodAsync("Mudify", "OnTrackProgress", progress);
 }, 100)
 
-window.buffer = (track) => {
+window.play = (track) => {
     let array = new Uint8Array(track.audio);
-    context.decodeAudioData(array.buffer, play);
+    context.decodeAudioData(array.buffer, initiate);
 }
 
-function play(buffer) {
+window.pause = () => {
+    suspend();
+};
+
+window.unpause = () => {
+    resume();
+}
+
+function initiate(buffer) {
+    hasEnded = false;
+    source = context.createBufferSource();
     source.buffer = buffer;
     source.connect(context.destination);
     source.start();
+    start = context.currentTime;
 
     DotNet.invokeMethodAsync("Mudify", "OnTrackStart");
     source.onended = onEnded;
 }
 
+function resume() {
+    context.resume();
+}
+
+function suspend() {
+    context.suspend();
+}
+
 function onEnded() {
+    hasEnded = true;
     DotNet.invokeMethodAsync("Mudify", "OnTrackEnd");
 }

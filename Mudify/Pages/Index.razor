@@ -29,34 +29,34 @@
 <div class="flex-container">
     <MudCard Class="player" Elevation="5">
         <MudCardContent>
-            <MudText Typo="Typo.h6" Class="track">@(Audio.Current?.Title ?? "Nothing")</MudText>
+            <MudText Typo="Typo.h6" Class="track">@(audio.Current?.Title ?? "Nothing")</MudText>
         </MudCardContent>
         <MudCardActions Class="input">
-            <MudText>@Audio.Current?.Position.ToString("hh\\:mm\\:ss")</MudText>
+            <MudText>@audio.Current?.Position.ToString("hh\\:mm\\:ss")</MudText>
             <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Small" DisableElevation="true"></MudFab>
-            <MudFab StartIcon="@Icons.Material.Filled.PlayCircle" Size="Size.Small" DisableElevation="true"></MudFab>
+            <MudToggleIconButton Toggled="@audio.IsPaused" ToggledChanged="PauseOrResumeAsync" Icon="@Icons.Material.Filled.PlayCircle" ToggledIcon="@Icons.Material.Filled.PauseCircle"></MudToggleIconButton>
             <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Small" DisableElevation="true"></MudFab>
-            <MudText>@Audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
+            <MudText>@audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
         </MudCardActions>
         <MudCardActions Class="progress">
-            <MudSlider @bind-Value="@Position" Size="Size.Medium" Disabled="true"></MudSlider>
+            <MudSlider @bind-Value="@Position" Max="@Duration" Size="Size.Medium" Disabled="true"></MudSlider>
         </MudCardActions>
     </MudCard>
 </div>
 
 @code{
     public double Position { get; set; }
+    public double Duration { get; set; }
 
     private IList<VideoSearchResult> videos = new List<VideoSearchResult>();
     private string search;
     private string source;
-    private bool isPlaying = false;
 
     protected override Task OnInitializedAsync()
     {
-        Audio.OnStart += OnStart;
-        Audio.OnFinished += OnFinished;
-        Audio.OnProgress += OnProgress;
+        audio.OnStart += OnStart;
+        audio.OnFinished += OnFinished;
+        audio.OnProgress += OnProgress;
 
         return base.OnInitializedAsync();
     }
@@ -70,13 +70,13 @@
     private async Task OnFinished(Track track)
     {
         snackbar.Add("Track finished!");
-        Position = 0;
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnProgress(Track track)
     {
-        Position = (track.Position.TotalSeconds / track.Duration.TotalSeconds) * 100;
+        Position = track.Position.TotalSeconds;
+        Duration = track.Duration.TotalSeconds;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -93,5 +93,17 @@
     private async Task PlayAsync(VideoSearchResult video)
     {
         await audio.PlayAsync(video);
+    }
+
+    private async Task PauseOrResumeAsync(bool pause)
+    {
+        if (pause)
+        {
+            await audio.PauseAsync();
+        }
+        else
+        {
+            await audio.ResumeAsync();
+        }
     }
 }
