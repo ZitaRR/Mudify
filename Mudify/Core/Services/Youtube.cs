@@ -1,9 +1,8 @@
 ﻿using YoutubeExplode;
 using YoutubeExplode.Search;
-using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
-namespace Mudify.Services;
+namespace Mudify.Core.Services;
 
 public class Youtube
 {
