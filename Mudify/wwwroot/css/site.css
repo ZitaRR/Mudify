@@ -89,8 +89,8 @@ a, .btn-link {
 }
 
 .player *{
-    margin: 0;
     padding: 0;
+    margin: 0;
 }
 
 .player .track{
@@ -107,6 +107,10 @@ a, .btn-link {
 
 .player .input *{
     margin: 0 .5rem;
+}
+
+.player .progress{
+    padding: 0 2rem;
 }
 
 tr:hover{

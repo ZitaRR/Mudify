@@ -32,13 +32,13 @@
             <MudText Typo="Typo.h6" Class="track">@(Audio.Current?.Title ?? "Nothing")</MudText>
         </MudCardContent>
         <MudCardActions Class="input">
-            <MudText>@Audio.Current?.Position.ToString("mm\\:ss")</MudText>
+            <MudText>@Audio.Current?.Position.ToString("hh\\:mm\\:ss")</MudText>
             <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Small" DisableElevation="true"></MudFab>
             <MudFab StartIcon="@Icons.Material.Filled.PlayCircle" Size="Size.Small" DisableElevation="true"></MudFab>
             <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Small" DisableElevation="true"></MudFab>
-            <MudText>@Audio.Current?.Duration.ToString("mm\\:ss")</MudText>
+            <MudText>@Audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
         </MudCardActions>
-        <MudCardActions>
+        <MudCardActions Class="progress">
             <MudSlider @bind-Value="@Position" Size="Size.Medium" Disabled="true"></MudSlider>
         </MudCardActions>
     </MudCard>

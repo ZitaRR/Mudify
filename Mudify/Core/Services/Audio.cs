@@ -2,7 +2,6 @@
 using Mudify.Core.Entities;
 using YoutubeExplode;
 using YoutubeExplode.Search;
-using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 
 namespace Mudify.Core.Services;
