@@ -33,7 +33,7 @@ window.unpause = () => {
 
 function initiate(buffer) {
     if (!hasEnded && source) {
-        source.disconnect();
+        dispose();
     }
 
     source = context.createBufferSource();
@@ -56,6 +56,13 @@ function suspend() {
 }
 
 function onEnded() {
-    hasEnded = true;
+    dispose();
     DotNet.invokeMethodAsync("Mudify", "OnTrackEnd");
+}
+
+function dispose() {
+    hasEnded = true;
+    source.stop();
+    source.disconnect();
+    source.onended = null;
 }
