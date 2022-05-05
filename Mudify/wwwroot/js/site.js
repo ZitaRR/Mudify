@@ -32,12 +32,16 @@ window.unpause = () => {
 }
 
 function initiate(buffer) {
-    hasEnded = false;
+    if (!hasEnded && source) {
+        source.disconnect();
+    }
+
     source = context.createBufferSource();
     source.buffer = buffer;
     source.connect(context.destination);
     source.start();
     start = context.currentTime;
+    hasEnded = false;
 
     DotNet.invokeMethodAsync("Mudify", "OnTrackStart");
     source.onended = onEnded;

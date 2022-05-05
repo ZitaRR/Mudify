@@ -35,7 +35,7 @@
             <MudText>@audio.Current?.Position.ToString("hh\\:mm\\:ss")</MudText>
             <div class="input">
                 <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Small" DisableElevation="true"></MudFab>
-                <MudToggleIconButton Toggled="@audio.IsPaused" ToggledChanged="PauseOrResumeAsync" Icon="@Icons.Material.Filled.PlayCircle" ToggledIcon="@Icons.Material.Filled.PauseCircle"></MudToggleIconButton>
+                <MudToggleIconButton Toggled="@audio.IsPaused" ToggledChanged="PauseOrResumeAsync" Disabled="@(audio.Current is null)" Icon="@Icons.Material.Filled.PauseCircle" ToggledIcon="@Icons.Material.Filled.PlayCircle"></MudToggleIconButton>
                 <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Small" DisableElevation="true"></MudFab>
             </div>
             <MudText>@audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
