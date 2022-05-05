@@ -98,11 +98,17 @@ a, .btn-link {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin: 0 1rem;
 }
 
-.player .input{
+.player .body{
     display: flex;
     justify-content: center;
+}
+
+.player .body .input *{
+    width: 2rem;
+    height: 2rem;
 }
 
 .player .progress{
