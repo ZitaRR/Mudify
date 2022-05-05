@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'mudify'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5028919DAE9A4535A16A91FF94C909F8 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6EFC07D0C17343C18EEEFCFB5A13E455 }}
           package: .
