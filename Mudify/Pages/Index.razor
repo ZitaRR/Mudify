@@ -66,6 +66,7 @@
     private Task OnStart(Track track)
     {
         snackbar.Add($"Now playing: {track.Title}");
+        Duration = track.Duration.Ticks;
         return Task.CompletedTask;
     }
 
@@ -77,8 +78,7 @@
 
     private async Task OnProgress(Track track)
     {
-        Position = track.Position.TotalSeconds;
-        Duration = track.Duration.TotalSeconds;
+        Position = track.Position.Ticks;
         await InvokeAsync(StateHasChanged);
     }
 

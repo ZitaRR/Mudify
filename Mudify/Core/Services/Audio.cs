@@ -8,7 +8,7 @@ namespace Mudify.Core.Services;
 
 public class Audio
 {
-    private static Func<Task> onStart;
+    private static Func<double, Task> onStart;
     private static Func<Task> onFinished;
     private static Func<long, Task> onProgress;
 
@@ -20,6 +20,7 @@ public class Audio
 
     private readonly IJSRuntime js;
     private readonly YoutubeClient client;
+    private Track temp;
 
     public Audio(IJSRuntime js)
     {
@@ -31,8 +32,16 @@ public class Audio
         onProgress += ProgressTrack;
     }
 
-    private async Task StartTrack()
+    private async Task StartTrack(double duration)
     {
+        Current = new()
+        {
+            Title = temp.Title,
+            Author = temp.Author,
+            Duration = TimeSpan.FromMilliseconds(duration),
+            Audio = temp.Audio
+        };
+
         await OnStart?.Invoke(Current);
     }
 
@@ -71,7 +80,7 @@ public class Audio
         MemoryStream memory = new();
         await stream.CopyToAsync(memory);
 
-        Current = new()
+        temp = new()
         {
             Title = video.Title,
             Author = video.Author.ChannelTitle,
@@ -80,7 +89,7 @@ public class Audio
         };
 
         IsPaused = false;
-        await js.InvokeVoidAsync("play", Current);
+        await js.InvokeVoidAsync("play", temp);
     }
 
     public async Task PauseAsync()
@@ -106,9 +115,9 @@ public class Audio
     }
 
     [JSInvokable]
-    public static async Task OnTrackStart()
+    public static async Task OnTrackStart(double duration)
     {
-        await onStart?.Invoke();
+        await onStart?.Invoke(duration);
     }
 
     [JSInvokable]

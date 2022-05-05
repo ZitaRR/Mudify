@@ -43,7 +43,7 @@ function initiate(buffer) {
     start = context.currentTime;
     hasEnded = false;
 
-    DotNet.invokeMethodAsync("Mudify", "OnTrackStart");
+    DotNet.invokeMethodAsync("Mudify", "OnTrackStart", source.buffer.duration * 1000);
     source.onended = onEnded;
 }
 
