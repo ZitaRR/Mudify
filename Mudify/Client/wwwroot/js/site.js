@@ -57,7 +57,7 @@ function suspend() {
 
 function onEnded() {
     dispose();
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackEnd");
+    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackFinish");
 }
 
 function dispose() {

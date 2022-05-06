@@ -17,6 +17,7 @@ public partial class Audio : IAsyncDisposable
     public Func<List<Track>, Task> OnTracksUpdated { get; set; }
     public Track Current { get; set; }
     public List<Track> Tracks = new();
+    public bool IsPaused { get; set; } = true;
 
     private readonly IJSRuntime js;
     private readonly HubConnection hub;
@@ -38,6 +39,7 @@ public partial class Audio : IAsyncDisposable
 
         hub.On<byte[]>("ReceiveAudio", async (audio) =>
         {
+            IsPaused = false;
             await js.InvokeVoidAsync("play", audio);
         });
 
@@ -59,6 +61,28 @@ public partial class Audio : IAsyncDisposable
 
         temp = track;
         await hub.SendAsync("GetAudio", track);
+    }
+
+    public async Task PauseAsync()
+    {
+        if (Current is null)
+        {
+            return;
+        }
+
+        IsPaused = true;
+        await js.InvokeVoidAsync("pause");
+    }
+
+    public async Task ResumeAsync()
+    {
+        if (Current is null)
+        {
+            return;
+        }
+
+        IsPaused = false;
+        await js.InvokeVoidAsync("unpause");
     }
 
     public async Task SearchAsync(string query)
@@ -99,6 +123,7 @@ public partial class Audio : IAsyncDisposable
             Duration = Current.Duration,
             Position = Current.Duration
         };
+
 
         await OnFinish?.Invoke(clone);
     }

@@ -33,8 +33,8 @@
             <MudText>@audio.Current?.Position.ToString("hh\\:mm\\:ss")</MudText>
             <div class="input">
                 <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleLeft" Size="Size.Small" DisableElevation="true"></MudFab>
-                <!--<MudToggleIconButton Toggled="@audio.IsPaused" ToggledChanged="PauseOrResumeAsync" Disabled="@(audio.Current is null)" Icon="@Icons.Material.Filled.PauseCircle" ToggledIcon="@Icons.Material.Filled.PlayCircle"></MudToggleIconButton>
-                --><MudFab StartIcon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Small" DisableElevation="true"></MudFab>
+                <MudToggleIconButton Toggled="@audio.IsPaused" ToggledChanged="PauseOrResumeAsync" Disabled="@(audio.Current is null)" Icon="@Icons.Material.Filled.PauseCircle" ToggledIcon="@Icons.Material.Filled.PlayCircle"></MudToggleIconButton>
+                <MudFab StartIcon="@Icons.Material.Filled.ArrowCircleRight" Size="Size.Small" DisableElevation="true"></MudFab>
             </div>
             <MudText>@audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
         </MudCardActions>
@@ -67,6 +67,18 @@
     private async Task PlayAsync(Track track)
     {
         await audio.PlayAsync(track);
+    }
+
+    private async Task PauseOrResumeAsync(bool pause)
+    {
+        if (pause)
+        {
+            await audio.PauseAsync();
+        }
+        else
+        {
+            await audio.ResumeAsync();
+        }
     }
 
     private Task OnStart(Track track)
