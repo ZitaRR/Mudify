@@ -26,9 +26,4 @@ public class AudioHub : Hub
         byte[] bytes = await audio.GetAudioAsync(track);
         await Clients.Caller.SendAsync("ReceiveAudio", bytes);
     }
-
-    public async Task Assem(string assem)
-    {
-        Console.WriteLine(assem);
-    }
 }
