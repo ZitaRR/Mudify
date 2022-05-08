@@ -40,7 +40,6 @@ public partial class Audio : IAsyncDisposable
         hub.On<byte[]>("ReceiveAudio", async (audio) =>
         {
             IsPaused = false;
-            await js.InvokeVoidAsync("setupAudio");
             await js.InvokeVoidAsync("play", audio);
         });
 

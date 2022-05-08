@@ -1,4 +1,5 @@
-﻿let context;
+﻿AudioContext = window.AudioContext || window.webkitAudioContext;
+const context = new AudioContext();
 let source;
 let start = 0;
 let hasEnded = true;
@@ -28,11 +29,6 @@ window.pause = () => {
 
 window.unpause = () => {
     resume();
-}
-
-function setupAudio() {
-    AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
 }
 
 function initiate(buffer) {
