@@ -40,13 +40,11 @@ function initiate(buffer) {
         dispose();
     }
 
-    alert(context);
     source = context.createBufferSource();
     source.buffer = buffer;
     source.connect(context.destination);
     source.start();
     start = context.currentTime;
-    alert(source + " - " + source.buffer.length);
     hasEnded = false;
 
     DotNet.invokeMethodAsync("Mudify.Client", "OnTrackStart", source.buffer.duration * 1000);
