@@ -3,7 +3,6 @@
 @using Mudify.Client.Services
 @inject Audio audio
 @inject ISnackbar snackbar
-@inject IJSRuntime js
 
 <PageTitle>Index</PageTitle>
 
@@ -11,8 +10,6 @@
     <MudTextField @bind-Value="@search" Label="Search" Variant="Variant.Outlined" Immediate="true"></MudTextField>
     <MudButton Variant="Variant.Filled" Color="Color.Tertiary" Disabled="@string.IsNullOrEmpty(search)" DisableElevation="true" OnClick="@(() => audio.SearchAsync(search))" Class="btn">Search</MudButton>
 </div>
-
-<MudButton @onclick="@(() => Alert())">Alert</MudButton>
 
 <MudSimpleTable Hover="true" Elevation="5" Class="table">
     <tbody>
@@ -65,11 +62,6 @@
         audio.OnStart += OnStart;
         audio.OnProgress += OnProgress;
         audio.OnFinish += OnFinish;
-    }
-
-    private async Task Alert()
-    {
-        await js.InvokeVoidAsync("alert", "Is this working on Safari?");   
     }
 
     private async Task PlayAsync(Track track)
