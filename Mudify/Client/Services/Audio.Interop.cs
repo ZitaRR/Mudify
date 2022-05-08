@@ -16,7 +16,7 @@ public partial class Audio
     }
 
     [JSInvokable]
-    public static async Task OnTrackProgress(long position)
+    public static async Task OnTrackProgress(double position, bool trackEnded)
     {
         if (onProgress is null)
         {
@@ -24,6 +24,11 @@ public partial class Audio
         }
 
         await onProgress.Invoke(position);
+
+        if (trackEnded)
+        {
+            await OnTrackFinish();
+        }
     }
 
     [JSInvokable]

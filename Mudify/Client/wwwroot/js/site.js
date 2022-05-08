@@ -14,8 +14,7 @@ setInterval(() => {
         return;
     }
 
-    progress = Math.round(((context.currentTime - start) / source.playbackRate.value) * 1000);
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackProgress", progress);
+    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackProgress", progress(), false);
 }, 100)
 
 window.play = (bytes) => {
@@ -57,7 +56,11 @@ function suspend() {
 
 function onEnded() {
     dispose();
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackFinish");
+    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackProgress", progress(), true);
+}
+
+function progress() {
+    return ((context.currentTime - start) / source.playbackRate.value) * 1000;
 }
 
 function dispose() {

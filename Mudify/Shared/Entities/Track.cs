@@ -11,7 +11,7 @@ public class Track
 
     private TimeSpan position;
 
-    public void SetPosition(long position)
+    public void SetPosition(double position)
     {
         this.position = TimeSpan.FromMilliseconds(position);
     }

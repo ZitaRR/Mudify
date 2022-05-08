@@ -8,7 +8,7 @@ namespace Mudify.Client.Services;
 public partial class Audio : IAsyncDisposable
 {
     private static Func<double, Task> onStart;
-    private static Func<long, Task> onProgress;
+    private static Func<double, Task> onProgress;
     private static Func<Task> onFinish;
 
     public Func<Track, Task> OnStart { get; set; }
@@ -108,7 +108,7 @@ public partial class Audio : IAsyncDisposable
         await OnStart?.Invoke(Current);
     }
 
-    private async Task TrackProgress(long position)
+    private async Task TrackProgress(double position)
     {
         Current.SetPosition(position);
         await OnProgress?.Invoke(Current);
