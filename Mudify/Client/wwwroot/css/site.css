@@ -123,6 +123,10 @@ tr:hover {
     margin: 2rem 0;
 }
 
+.nav-item a{
+    align-items: center;
+}
+
 @media screen and (min-width: 300px) {
     .player .input * {
         margin: 0 .2rem;
