@@ -38,7 +38,8 @@
             </div>
             <MudText>@audio.Current?.Duration.ToString("hh\\:mm\\:ss")</MudText>
         </MudCardActions>
-        <MudCardActions Class="progress">
+        <MudCardActions Class="sliders">
+            <MudSlider T="double" Value="@Volume" ValueChanged="UpdateVolumeAsync" Size="Size.Medium" Color="Color.Success" Class="volume"></MudSlider>
             <MudSlider @bind-Value="@Position" Max="@Duration" Size="Size.Medium" Disabled="true"></MudSlider>
         </MudCardActions>
     </MudCard>
@@ -47,6 +48,7 @@
 @code{
     public double Position { get; set; }
     public double Duration { get; set; }
+    public double Volume { get; set; } = 100;
 
     private ICollection<Track> tracks = new List<Track>();
     private string search;
@@ -79,6 +81,12 @@
         {
             await audio.ResumeAsync();
         }
+    }
+
+    private async Task UpdateVolumeAsync(double volume)
+    {
+        Volume = volume;
+        await audio.UpdateVolumeAsync(volume);
     }
 
     private Task OnStart(Track track)

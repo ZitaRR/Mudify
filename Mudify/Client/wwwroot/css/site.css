@@ -111,7 +111,13 @@ a, .btn-link {
     height: 2rem;
 }
 
-.player .progress {
+.player .sliders {
+    display: flex;
+    flex-direction: column;
+    padding: 0 2rem;
+}
+
+.player .sliders .volume{
     padding: 0 2rem;
 }
 
@@ -146,5 +152,9 @@ tr:hover {
 
     .player {
         width: 35vw;
+    }
+
+    .player .sliders .volume {
+        padding: 0 4rem;
     }
 }

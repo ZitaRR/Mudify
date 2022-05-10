@@ -85,6 +85,11 @@ public partial class Audio : IAsyncDisposable
         await js.InvokeVoidAsync("unpause");
     }
 
+    public async Task UpdateVolumeAsync(double volume)
+    {
+        await js.InvokeVoidAsync("updateVolume", volume);
+    }
+
     public async Task SearchAsync(string query)
     {
         if (string.IsNullOrEmpty(query))
