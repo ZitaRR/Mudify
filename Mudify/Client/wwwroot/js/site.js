@@ -1,23 +1,12 @@
 ﻿AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
-let source;
+const assembly = "Mudify.Client";
+const trackStart = "OnTrackStart";
+const trackProgress = "OnTrackProgress";
+let sourceNode;
 let volumeNode;
-let start = 0;
-let hasEnded = true;
+let startTime = 0;
 let currentVolume = 1;
-
-setInterval(() => {
-    if (!source?.buffer || hasEnded ||
-        context.state === "suspended" ||
-        context.state === "closed") {
-        return;
-    }
-    else if (source.buffer.length <= 0) {
-        return;
-    }
-
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackProgress", progress(), false);
-}, 100)
 
 window.play = (bytes) => {
     let array = new Uint8Array(bytes);
@@ -33,11 +22,19 @@ window.unpause = () => {
 }
 
 window.updateVolume = (volume) => {
-    updateVolumeGain(volume);
+    updateVolumeNode(volume);
 }
 
+setInterval(() => {
+    if (!isAudioPlaying()) {
+        return;
+    }
+
+    DotNet.invokeMethodAsync(assembly, trackProgress, position(), false);
+}, 100)
+
 function initiate(buffer) {
-    if (!hasEnded && source) {
+    if (isAudioPlaying()) {
         dispose();
     }
 
@@ -45,15 +42,14 @@ function initiate(buffer) {
     volumeNode.gain.value = currentVolume;
     volumeNode.connect(context.destination);
 
-    source = context.createBufferSource();
-    source.buffer = buffer;
-    source.connect(volumeNode);
-    source.start();
-    start = context.currentTime;
-    hasEnded = false;
+    sourceNode = context.createBufferSource();
+    sourceNode.buffer = buffer;
+    sourceNode.connect(volumeNode);
+    sourceNode.start();
+    startTime = context.currentTime;
 
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackStart", source.buffer.duration * 1000);
-    source.onended = onEnded;
+    DotNet.invokeMethodAsync(assembly, trackStart, sourceNode.buffer.duration * 1000);
+    sourceNode.onended = onEnded;
 }
 
 function resume() {
@@ -66,21 +62,26 @@ function suspend() {
 
 function onEnded() {
     dispose();
-    DotNet.invokeMethodAsync("Mudify.Client", "OnTrackProgress", progress(), true);
+    DotNet.invokeMethodAsync(assembly, trackProgress, position(), true);
 }
 
-function progress() {
-    return ((context.currentTime - start) / source.playbackRate.value) * 1000;
+function position() {
+    return ((context.currentTime - startTime) / sourceNode.playbackRate.value) * 1000;
 }
 
-function updateVolumeGain(volume) {
+function updateVolumeNode(volume) {
     currentVolume = volume / 100;
     volumeNode.gain.value = currentVolume;
 }
 
+function isAudioPlaying() {
+    return ((sourceNode && sourceNode?.buffer.length > 0) ||
+        (context.state !== "suspended" &&
+        context.state !== "closed"));
+}
+
 function dispose() {
-    hasEnded = true;
-    source.stop();
-    source.disconnect();
-    source.onended = null;
+    sourceNode.stop();
+    sourceNode.disconnect();
+    sourceNode.onended = null;
 }
